@@ -2,43 +2,53 @@ import datetime
 saldo = 0
 LIMITE_SAQUES = 3
 countSaques = 0
-operacao = 0
+countOperacao = 1
+numero_da_conta = 0
 extrato = []
+numero_da_conta = 1
+Lista_de_contas = []
 
 hoje = datetime.date.today()
 
 data = f"{hoje.day}/{hoje.month}/{hoje.year}"
 
-def registarOperacao(num, tipo, valor, data):
-    global operacao
-    aux = (num, tipo, valor, data)
+def criar_conta(cpf,lista_contas):
+    global Lista_de_contas
+    
+    conta = {"cpf": cpf,"ägência" : "0001" , "numero da conta" : numero_da_conta}
+    
+    lista_contas.append(conta)
+
+def retornar_lista_de_contas():
+    for conta in Lista_de_contas:
+        print(conta)
+ 
+def registarOperacao(**args):
+    global countOperacao
+    aux = (args)
     extrato.append(aux)
-    operacao = operacao + 1
+    countOperacao = countOperacao + 1
     
 def depositar(valor):
-    lc_tipo_operacao = "deposito"
     global saldo
     saldo = saldo + valor
-    registarOperacao(operacao, lc_tipo_operacao, valor, data)
+    registarOperacao(id = countOperacao, tipo_de_operacao = "deposito", valor = valor, data = data)
     
-def sacar(valor):
-    lc_tipo_operacao = "saque"
+def sacar(*,valor):
     global saldo, countSaques
     saldo = saldo - valor
-    print(f"valor sacado \n saldo atual: {saldo}")
     countSaques = countSaques + 1
     
-    registarOperacao(operacao, lc_tipo_operacao, valor, data)
+    registarOperacao(id = countOperacao, tipo_de_operacao = "saque", valor = valor, data = data)
 
 def estadoDaConta():
-    meta_dados = {"Saldo": saldo, "Operações Realizadas": operacao, "Saques disponíveis": LIMITE_SAQUES - countSaques}
-    mensagem = "\n".join([f"{chave.title()} = {valor}" for chave, valor in meta_dados.items()]  )
+    meta_dados = {"Saldo": saldo, "Operações Realizadas": countOperacao, "Saques disponíveis": LIMITE_SAQUES - countSaques}
+    mensagem = "\t||\t".join([f"{chave.title()} = {valor}" for chave, valor in meta_dados.items()]  )
     return mensagem
-
 
 def retornarExtrato():
     
     for linha in extrato:
         print(linha) 
     
-    print(f"\nSaldo atual: {saldo}")
+    print(estadoDaConta())
